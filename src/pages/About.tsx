@@ -12,18 +12,18 @@ export function About() {
   return (
     <div className="space-y-7">
       <header className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight text-white">
+        <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white">
           About
         </h1>
-        <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-neutral-300">
+        <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
           <p>{aboutIntro}</p>
           <p>{aboutClosing}</p>
         </div>
       </header>
 
-      <section className="grid gap-6 rounded-2xl border border-white/10 bg-white/5 p-6 md:grid-cols-12 md:items-center">
+      <section className="grid gap-6 rounded-2xl border border-black/10 bg-black/[0.02] p-6 dark:border-white/10 dark:bg-white/5 md:grid-cols-12 md:items-center">
         <div className="md:col-span-4">
-          <div className="aspect-square overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-fuchsia-500/15 via-cyan-400/10 to-amber-300/10">
+          <div className="aspect-square overflow-hidden rounded-2xl border border-black/10 bg-gradient-to-br from-fuchsia-500/15 via-cyan-400/10 to-amber-300/10 dark:border-white/10">
             {imgOk ? (
               <img
                 src="/profile.png"
@@ -34,11 +34,14 @@ export function About() {
             ) : (
               <div className="flex h-full w-full items-center justify-center">
                 <div className="text-center">
-                  <div className="text-4xl font-semibold tracking-tight text-white">
+                  <div className="text-4xl font-semibold tracking-tight text-neutral-900 dark:text-white">
                     RJ
                   </div>
-                  <div className="mt-2 text-xs text-neutral-300">
-                    Add <span className="font-semibold text-white">public/profile.png</span>
+                  <div className="mt-2 text-xs text-neutral-500 dark:text-neutral-300">
+                    Add{' '}
+                    <span className="font-semibold text-neutral-900 dark:text-white">
+                      public/profile.png
+                    </span>
                   </div>
                 </div>
               </div>
@@ -47,7 +50,7 @@ export function About() {
         </div>
 
         <div className="space-y-3 md:col-span-8">
-          <div className="text-sm font-semibold text-white">
+          <div className="text-sm font-semibold text-neutral-900 dark:text-white">
             What I’m great at
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -59,7 +62,7 @@ export function About() {
             ].map((x) => (
               <div
                 key={x}
-                className="rounded-xl border border-white/10 bg-neutral-950/40 px-4 py-3 text-sm text-neutral-200"
+                className="rounded-xl border border-black/10 bg-neutral-100/80 px-4 py-3 text-sm text-neutral-800 dark:border-white/10 dark:bg-neutral-950/40 dark:text-neutral-200"
               >
                 {x}
               </div>
@@ -70,4 +73,3 @@ export function About() {
     </div>
   )
 }
-

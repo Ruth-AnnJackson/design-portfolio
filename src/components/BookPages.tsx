@@ -53,11 +53,11 @@ export function BookPages(props: { title: string; pages: BookPage[] }) {
   const current = pages[index]
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:col-span-2">
-      <div className="flex flex-col gap-3 border-b border-white/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/[0.02] sm:col-span-2 dark:border-white/10 dark:bg-white/5">
+      <div className="flex flex-col gap-3 border-b border-black/10 p-4 sm:flex-row sm:items-center sm:justify-between dark:border-white/10">
         <div>
-          <div className="text-sm font-semibold text-white">{title}</div>
-          <div className="mt-0.5 text-xs text-neutral-400">
+          <div className="text-sm font-semibold text-neutral-900 dark:text-white">{title}</div>
+          <div className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
             Turn the page — use arrows or click the sides of the spread.
           </div>
         </div>
@@ -66,18 +66,18 @@ export function BookPages(props: { title: string; pages: BookPage[] }) {
             type="button"
             onClick={goPrev}
             disabled={!canPrev || phase !== 'idle'}
-            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white transition enabled:hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-xl border border-black/10 bg-black/[0.04] px-3 py-2 text-sm font-semibold text-neutral-900 transition enabled:hover:bg-black/[0.08] disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:bg-white/5 dark:text-white dark:enabled:hover:bg-white/10"
           >
             Previous
           </button>
-          <span className="rounded-full border border-white/10 bg-neutral-950/40 px-3 py-1 text-xs text-neutral-200">
+          <span className="rounded-full border border-black/10 bg-neutral-100/90 px-3 py-1 text-xs text-neutral-800 dark:border-white/10 dark:bg-neutral-950/40 dark:text-neutral-200">
             {current.label}
           </span>
           <button
             type="button"
             onClick={goNext}
             disabled={!canNext || phase !== 'idle'}
-            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white transition enabled:hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-xl border border-black/10 bg-black/[0.04] px-3 py-2 text-sm font-semibold text-neutral-900 transition enabled:hover:bg-black/[0.08] disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:bg-white/5 dark:text-white dark:enabled:hover:bg-white/10"
           >
             Next
           </button>
@@ -88,7 +88,7 @@ export function BookPages(props: { title: string; pages: BookPage[] }) {
         <div className="mx-auto max-w-3xl [perspective:1800px]">
           <div
             className={[
-              'relative aspect-[4/3] select-none overflow-hidden rounded-xl border border-white/10 bg-neutral-950 shadow-[inset_0_0_60px_rgba(0,0,0,0.35)]',
+              'relative aspect-[4/3] select-none overflow-hidden rounded-xl border border-black/10 bg-neutral-100 shadow-[inset_0_0_60px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-neutral-950 dark:shadow-[inset_0_0_60px_rgba(0,0,0,0.35)]',
               phase === 'idle' ? 'cursor-pointer' : 'pointer-events-none cursor-default',
             ].join(' ')}
             onClick={(e) => {
@@ -127,7 +127,7 @@ export function BookPages(props: { title: string; pages: BookPage[] }) {
                   ].join(' ')}
                   onTransitionEnd={onFlipEnd}
                 >
-                  <div className="h-full w-full bg-neutral-900">
+                  <div className="h-full w-full bg-neutral-200 dark:bg-neutral-900">
                     <img
                       src={pages[index].src}
                       alt={pages[index].alt}
@@ -157,7 +157,7 @@ export function BookPages(props: { title: string; pages: BookPage[] }) {
                   ].join(' ')}
                   onTransitionEnd={onFlipEnd}
                 >
-                  <div className="h-full w-full bg-neutral-900">
+                  <div className="h-full w-full bg-neutral-200 dark:bg-neutral-900">
                     <img
                       src={pages[index].src}
                       alt={pages[index].alt}

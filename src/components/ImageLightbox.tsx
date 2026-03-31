@@ -23,7 +23,7 @@ export function ImageLightbox({
   canPrev = false,
   canNext = false,
   zIndexClass = 'z-[60]',
-  imgClassName = 'max-h-[85vh] w-auto max-w-[95vw] rounded-2xl border border-white/10 bg-neutral-950 object-contain',
+  imgClassName = 'max-h-[85vh] w-auto max-w-[95vw] rounded-2xl border border-neutral-200 bg-white object-contain dark:border-white/10 dark:bg-neutral-950',
 }: ImageLightboxProps) {
   const swipeStartX = useRef<number | null>(null)
 

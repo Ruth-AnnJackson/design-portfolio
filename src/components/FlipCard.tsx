@@ -14,11 +14,11 @@ export function FlipCard(props: {
   return (
     <button
       type="button"
-      className="group w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-left transition hover:bg-white/10"
+      className="group w-full overflow-hidden rounded-2xl border border-black/10 bg-black/[0.02] text-left transition hover:bg-black/[0.05] dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
       aria-describedby={caption ? labelId : undefined}
       onClick={() => setFlipped((v) => !v)}
     >
-      <div className="relative aspect-[7/4] bg-neutral-950 [perspective:1200px]">
+      <div className="relative aspect-[7/4] bg-neutral-100 [perspective:1200px] dark:bg-neutral-950">
         <div
           className={[
             'absolute inset-0 [transform-style:preserve-3d] transition-transform duration-500 ease-out',
@@ -43,17 +43,16 @@ export function FlipCard(props: {
           </div>
         </div>
 
-        <div className="pointer-events-none absolute bottom-2 left-2 rounded-full border border-white/10 bg-black/40 px-2 py-1 text-[11px] font-semibold text-white/90 opacity-0 transition group-hover:opacity-100">
+        <div className="pointer-events-none absolute bottom-2 left-2 rounded-full border border-black/10 bg-white/80 px-2 py-1 text-[11px] font-semibold text-neutral-800 opacity-0 shadow-sm transition group-hover:opacity-100 dark:border-white/10 dark:bg-black/40 dark:text-white/90">
           Click to flip
         </div>
       </div>
 
       {caption ? (
-        <div id={labelId} className="p-3 text-xs text-neutral-400">
+        <div id={labelId} className="p-3 text-xs text-neutral-500 dark:text-neutral-400">
           {caption}
         </div>
       ) : null}
     </button>
   )
 }
-
