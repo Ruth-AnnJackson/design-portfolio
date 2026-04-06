@@ -1,0 +1,5 @@
+dist
+node_modules
+
+# Exceeds Vercel/GitHub single-file limit (~100 MB); not in Git
+public/assets/publications/pastors-appreciation/official-pastors-appreciation-portrait-colored.pdf
