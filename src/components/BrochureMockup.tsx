@@ -1,4 +1,5 @@
 import { useId, useState } from 'react'
+import { ui } from '../ui/classes'
 
 type BrochureImage = { src: string; alt: string }
 
@@ -35,7 +36,7 @@ function MockupFrame({
     >
       <div
         className={[
-          'rounded-sm border border-black/25 bg-white shadow-[0_28px_56px_-16px_rgba(0,0,0,0.55),0_0_0_1px_rgba(255,255,255,0.06)_inset]',
+          ui.brochurePaper,
           fillFace ? 'flex max-h-full max-w-full items-center justify-center' : '',
         ].join(' ')}
       >
@@ -70,7 +71,7 @@ export function BrochureMockup({ cover, inside, caption, onExpand }: BrochureMoc
   const footer = caption ?? 'Tri-fold brochure — click mockup to flip'
 
   return (
-    <div className="group/mock overflow-hidden rounded-2xl border border-black/10 bg-gradient-to-b from-neutral-200/90 via-neutral-100 to-neutral-50 sm:col-span-2 dark:border-white/10 dark:from-neutral-900/90 dark:via-neutral-950 dark:to-neutral-950">
+    <div className={`group/mock sm:col-span-2 ${ui.surfaceBrochureStage}`}>
       <div className="relative px-5 py-10 sm:px-10 sm:py-14">
         <div
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_85%_55%_at_50%_78%,rgba(0,0,0,0.06),transparent_55%)] dark:bg-[radial-gradient(ellipse_85%_55%_at_50%_78%,rgba(255,255,255,0.07),transparent_55%)]"
@@ -82,7 +83,7 @@ export function BrochureMockup({ cover, inside, caption, onExpand }: BrochureMoc
           onClick={() => setFlipped((v) => !v)}
           aria-pressed={flipped}
           aria-describedby={labelId}
-          className="relative mx-auto block w-full max-w-full rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50 dark:focus-visible:ring-white/25 dark:focus-visible:ring-offset-neutral-950"
+          className="relative mx-auto block w-full max-w-full rounded-md text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50 dark:focus-visible:ring-white/25 dark:focus-visible:ring-offset-neutral-950"
         >
           {/* Cover sets natural width/height; no vh caps or max-w-4xl. Only max-w-full for narrow viewports. */}
           <div className="relative mx-auto w-fit max-w-full [perspective:1400px]">
@@ -111,7 +112,9 @@ export function BrochureMockup({ cover, inside, caption, onExpand }: BrochureMoc
               </div>
             </div>
 
-            <div className="pointer-events-none absolute bottom-2 left-1/2 z-10 -translate-x-1/2 rounded-full border border-black/10 bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-neutral-800 opacity-0 shadow-sm backdrop-blur-sm transition group-hover/mock:opacity-100 dark:border-white/10 dark:bg-black/50 dark:text-white/90">
+            <div
+              className={`pointer-events-none absolute bottom-2 left-1/2 z-10 -translate-x-1/2 opacity-0 transition group-hover/mock:opacity-100 ${ui.hintFloating}`}
+            >
               Click to flip
             </div>
           </div>
@@ -130,14 +133,14 @@ export function BrochureMockup({ cover, inside, caption, onExpand }: BrochureMoc
               <button
                 type="button"
                 onClick={() => onExpand(cover.src)}
-                className="rounded-lg border border-black/10 bg-black/[0.04] px-3 py-1.5 font-medium text-neutral-800 transition hover:border-black/20 hover:bg-black/[0.08] hover:text-neutral-950 dark:border-white/10 dark:bg-white/5 dark:text-neutral-200 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-white"
+                className={`${ui.btnGhost} text-xs font-medium`}
               >
                 Enlarge cover
               </button>
               <button
                 type="button"
                 onClick={() => onExpand(inside.src)}
-                className="rounded-lg border border-black/10 bg-black/[0.04] px-3 py-1.5 font-medium text-neutral-800 transition hover:border-black/20 hover:bg-black/[0.08] hover:text-neutral-950 dark:border-white/10 dark:bg-white/5 dark:text-neutral-200 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-white"
+                className={`${ui.btnGhost} text-xs font-medium`}
               >
                 Enlarge inside
               </button>

@@ -1,4 +1,5 @@
 import { useId, useState } from 'react'
+import { ui } from '../ui/classes'
 
 export type FlipCardImage = { src: string; alt: string }
 
@@ -14,7 +15,7 @@ export function FlipCard(props: {
   return (
     <button
       type="button"
-      className="group w-full overflow-hidden rounded-2xl border border-black/10 bg-black/[0.02] text-left transition hover:bg-black/[0.05] dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+      className={`group w-full overflow-hidden text-left ${ui.surfaceCard} ${ui.surfaceCardHover}`}
       aria-describedby={caption ? labelId : undefined}
       onClick={() => setFlipped((v) => !v)}
     >
@@ -43,7 +44,9 @@ export function FlipCard(props: {
           </div>
         </div>
 
-        <div className="pointer-events-none absolute bottom-2 left-2 rounded-full border border-black/10 bg-white/80 px-2 py-1 text-[11px] font-semibold text-neutral-800 opacity-0 shadow-sm transition group-hover:opacity-100 dark:border-white/10 dark:bg-black/40 dark:text-white/90">
+        <div
+          className={`pointer-events-none absolute bottom-2 left-2 opacity-0 transition group-hover:opacity-100 ${ui.hintFloating}`}
+        >
           Click to flip
         </div>
       </div>

@@ -12,8 +12,8 @@ const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
 
 export function Layout() {
   return (
-    <div className="min-h-dvh bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50">
-      <header className="sticky top-0 z-50 border-b border-black/10 bg-neutral-50/80 backdrop-blur dark:border-white/10 dark:bg-neutral-950/80">
+    <div className="min-h-dvh overflow-x-hidden bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50">
+      <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-neutral-50/80 backdrop-blur dark:border-white/[0.08] dark:bg-neutral-950/80">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4 sm:flex-nowrap sm:gap-6">
           <NavLink to="/" className="group min-w-0">
             <div className="text-sm font-semibold tracking-[0.18em] text-neutral-900 dark:text-white">
@@ -27,11 +27,8 @@ export function Layout() {
           <div className="flex flex-wrap items-center justify-end gap-3 sm:gap-5">
             <ThemeToggle />
             <nav className="flex items-center gap-4 sm:gap-5">
-              <NavLink to="/projects" className={navLinkClassName}>
-                Projects
-              </NavLink>
-              <NavLink to="/showcase" className={navLinkClassName}>
-                Showcase
+              <NavLink to="/work" className={navLinkClassName}>
+                Work
               </NavLink>
               <NavLink to="/about" className={navLinkClassName}>
                 About
@@ -48,7 +45,7 @@ export function Layout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-black/10 dark:border-white/10">
+      <footer className="border-t border-black/[0.06] dark:border-white/[0.08]">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-8 text-sm text-neutral-500 dark:text-neutral-400 sm:flex-row sm:items-center sm:justify-between">
           <div>© {new Date().getFullYear()} Ruth-Ann Jackson</div>
           <div className="flex gap-4">

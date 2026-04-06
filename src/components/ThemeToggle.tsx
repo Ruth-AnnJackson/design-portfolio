@@ -1,4 +1,5 @@
 import { useTheme } from '../context/ThemeContext'
+import { ui } from '../ui/classes'
 
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme()
@@ -8,7 +9,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-black/10 bg-black/[0.04] text-neutral-700 transition hover:border-black/15 hover:bg-black/[0.07] dark:border-white/10 dark:bg-white/5 dark:text-neutral-200 dark:hover:border-white/20 dark:hover:bg-white/10"
+      className={ui.btnIcon}
       aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
       aria-pressed={isDark}
       title={isDark ? 'Light mode' : 'Dark mode'}

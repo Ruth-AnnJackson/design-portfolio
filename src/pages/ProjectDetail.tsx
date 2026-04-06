@@ -2,13 +2,13 @@ import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { BookPages } from '../components/BookPages'
 import { BrochureMockup } from '../components/BrochureMockup'
+import { PortfolioMockup } from '../components/PortfolioMockup'
 import { getProjectById } from '../content/projects'
+import { getCategoryBySlug } from '../content/services'
 import { FlipCard } from '../components/FlipCard'
 import { ImageLightbox } from '../components/ImageLightbox'
+import { ui } from '../ui/classes'
 
-const cardBorder =
-  'border border-black/10 bg-black/[0.02] dark:border-white/10 dark:bg-white/5'
-const cardHover = 'hover:bg-black/[0.05] dark:hover:bg-white/10'
 const mediaWell = 'bg-neutral-100 dark:bg-neutral-950'
 const subtleText = 'text-neutral-500 dark:text-neutral-400'
 
@@ -66,9 +66,9 @@ export function ProjectDetail() {
         </h1>
         <Link
           className="text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
-          to="/projects"
+          to="/work"
         >
-          Back to projects
+          Back to work
         </Link>
       </div>
     )
@@ -78,11 +78,8 @@ export function ProjectDetail() {
     <div className="space-y-7">
       <header className="space-y-3">
         <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-600 dark:text-neutral-300">
-          <Link
-            to="/projects"
-            className="hover:text-neutral-900 dark:hover:text-white"
-          >
-            Projects
+          <Link to="/work" className="hover:text-neutral-900 dark:hover:text-white">
+            Work
           </Link>
           <span className="text-neutral-400 dark:text-neutral-600">/</span>
           <span className="text-neutral-800 dark:text-neutral-200">{project.title}</span>
@@ -104,7 +101,7 @@ export function ProjectDetail() {
                 <a
                   key={d.href}
                   href={d.href}
-                  className="inline-flex items-center justify-center rounded-xl border border-black/10 bg-black/[0.04] px-4 py-2 text-sm font-semibold text-neutral-900 transition hover:bg-black/[0.08] dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                  className={ui.btnSecondarySm}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -117,14 +114,29 @@ export function ProjectDetail() {
 
         <div className="flex flex-wrap gap-2">
           {project.tags.map((t) => (
-            <span
-              key={t}
-              className="rounded-full border border-black/10 bg-neutral-100/90 px-2 py-0.5 text-xs text-neutral-800 dark:border-white/10 dark:bg-neutral-950/40 dark:text-neutral-200"
-            >
+            <span key={t} className={ui.pillTag}>
               {t}
             </span>
           ))}
         </div>
+
+        {project.services.length ? (
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+            <span className="font-semibold text-neutral-600 dark:text-neutral-400">In</span>
+            {project.services.map((slug) => {
+              const def = getCategoryBySlug(slug)
+              return (
+                <Link
+                  key={slug}
+                  to={`/work/${slug}`}
+                  className={ui.linkPill}
+                >
+                  {def?.title ?? slug}
+                </Link>
+              )
+            })}
+          </div>
+        ) : null}
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2">
@@ -142,21 +154,28 @@ export function ProjectDetail() {
 
           if ('kind' in item && item.kind === 'video') {
             return (
-              <div
-                key={item.src}
-                className={`overflow-hidden rounded-2xl sm:col-span-2 ${cardBorder}`}
-              >
-                <div className={`aspect-video w-full overflow-hidden ${mediaWell}`}>
-                  <video
-                    className="h-full w-full object-contain"
-                    src={item.src}
-                    controls
-                    playsInline
-                    preload="metadata"
-                    poster={item.poster}
-                  />
-                </div>
-                <div className={`p-3 text-xs ${subtleText}`}>{item.alt}</div>
+              <div key={item.src} className="sm:col-span-2">
+                <PortfolioMockup>
+                  <div className={`aspect-video w-full overflow-hidden ${mediaWell}`}>
+                    <video
+                      className="h-full w-full object-contain"
+                      src={item.src}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      poster={item.poster}
+                    />
+                  </div>
+                </PortfolioMockup>
+                <div className={`mt-3 text-xs ${subtleText}`}>{item.alt}</div>
+                {item.disclaimer ? (
+                  <p
+                    className={`mt-2 max-w-3xl text-xs leading-relaxed italic ${subtleText}`}
+                    role="note"
+                  >
+                    {item.disclaimer}
+                  </p>
+                ) : null}
               </div>
             )
           }
@@ -192,7 +211,7 @@ export function ProjectDetail() {
             return (
               <div
                 key={item.id}
-                className={`overflow-hidden rounded-2xl sm:col-span-2 ${cardBorder}`}
+                className={`overflow-hidden sm:col-span-2 ${ui.surfaceGroup}`}
               >
                 <div className="flex w-full items-center justify-between gap-4 p-4 text-left">
                   <div className="min-w-0">
@@ -210,7 +229,7 @@ export function ProjectDetail() {
                   <div className="flex items-center gap-3">
                     {cover ? (
                       <div
-                        className={`hidden h-10 w-16 overflow-hidden rounded-lg border border-black/10 sm:block dark:border-white/10 ${mediaWell}`}
+                        className={`hidden h-10 w-16 overflow-hidden rounded-lg sm:block ${mediaWell}`}
                       >
                         <img
                           src={cover.src}
@@ -223,7 +242,7 @@ export function ProjectDetail() {
                   </div>
                 </div>
 
-                <div className="border-t border-black/10 p-4 dark:border-white/10">
+                <div className={`p-4 ${ui.dividerTop}`}>
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {item.items.map((img, idx) => (
                       <button
@@ -233,17 +252,19 @@ export function ProjectDetail() {
                           const sources = item.items.map((i) => i.src)
                           setLightboxFromSources(sources, idx)
                         }}
-                        className="group cursor-zoom-in overflow-hidden rounded-2xl border border-black/10 bg-neutral-100/80 text-left hover:bg-neutral-200/80 dark:border-white/10 dark:bg-neutral-950/30 dark:hover:bg-neutral-950/40"
+                        className="group w-full cursor-zoom-in text-left"
                       >
-                        <div className={`aspect-[4/3] overflow-hidden ${mediaWell}`}>
-                          <img
-                            src={img.src}
-                            alt={img.alt}
-                            className="h-full w-full object-contain p-3 transition duration-500 group-hover:scale-[1.01]"
-                            loading="lazy"
-                          />
-                        </div>
-                        <div className={`p-3 text-xs ${subtleText}`}>{img.alt}</div>
+                        <PortfolioMockup className={ui.mockupHoverLift}>
+                          <div className={`aspect-[4/3] overflow-hidden ${mediaWell}`}>
+                            <img
+                              src={img.src}
+                              alt={img.alt}
+                              className="h-full w-full object-contain p-2 transition duration-500 group-hover:scale-[1.01] sm:p-3"
+                              loading="lazy"
+                            />
+                          </div>
+                        </PortfolioMockup>
+                        <div className={`mt-2 text-xs ${subtleText}`}>{img.alt}</div>
                       </button>
                     ))}
                   </div>
@@ -263,17 +284,19 @@ export function ProjectDetail() {
                   idx >= 0 ? idx : 0,
                 )
               }}
-              className={`group overflow-hidden rounded-2xl text-left ${cardBorder} ${cardHover}`}
+              className="group w-full text-left"
             >
-              <div className={`aspect-[4/3] overflow-hidden ${mediaWell}`}>
-                <img
-                  src={item.src}
-                  alt={item.alt}
-                  className="h-full w-full object-contain p-3 transition duration-500 group-hover:scale-[1.01]"
-                  loading="lazy"
-                />
-              </div>
-              <div className={`p-3 text-xs ${subtleText}`}>{item.alt}</div>
+              <PortfolioMockup className={ui.mockupHoverLift}>
+                <div className={`aspect-[4/3] overflow-hidden ${mediaWell}`}>
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    className="h-full w-full object-contain p-3 transition duration-500 group-hover:scale-[1.01]"
+                    loading="lazy"
+                  />
+                </div>
+              </PortfolioMockup>
+              <div className={`mt-3 text-xs ${subtleText}`}>{item.alt}</div>
             </button>
           )
         })}

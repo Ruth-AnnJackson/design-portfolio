@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { ui } from '../ui/classes'
 
 export type BookPage = { src: string; alt: string; label: string }
 
@@ -53,8 +54,8 @@ export function BookPages(props: { title: string; pages: BookPage[] }) {
   const current = pages[index]
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-black/10 bg-black/[0.02] sm:col-span-2 dark:border-white/10 dark:bg-white/5">
-      <div className="flex flex-col gap-3 border-b border-black/10 p-4 sm:flex-row sm:items-center sm:justify-between dark:border-white/10">
+    <div className={`overflow-hidden sm:col-span-2 ${ui.surfaceGroup}`}>
+      <div className={`flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between ${ui.dividerBottom}`}>
         <div>
           <div className="text-sm font-semibold text-neutral-900 dark:text-white">{title}</div>
           <div className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
@@ -66,18 +67,16 @@ export function BookPages(props: { title: string; pages: BookPage[] }) {
             type="button"
             onClick={goPrev}
             disabled={!canPrev || phase !== 'idle'}
-            className="rounded-xl border border-black/10 bg-black/[0.04] px-3 py-2 text-sm font-semibold text-neutral-900 transition enabled:hover:bg-black/[0.08] disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:bg-white/5 dark:text-white dark:enabled:hover:bg-white/10"
+            className={ui.btnGhost}
           >
             Previous
           </button>
-          <span className="rounded-full border border-black/10 bg-neutral-100/90 px-3 py-1 text-xs text-neutral-800 dark:border-white/10 dark:bg-neutral-950/40 dark:text-neutral-200">
-            {current.label}
-          </span>
+          <span className={ui.pillTagLg}>{current.label}</span>
           <button
             type="button"
             onClick={goNext}
             disabled={!canNext || phase !== 'idle'}
-            className="rounded-xl border border-black/10 bg-black/[0.04] px-3 py-2 text-sm font-semibold text-neutral-900 transition enabled:hover:bg-black/[0.08] disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:bg-white/5 dark:text-white dark:enabled:hover:bg-white/10"
+            className={ui.btnGhost}
           >
             Next
           </button>
@@ -88,7 +87,7 @@ export function BookPages(props: { title: string; pages: BookPage[] }) {
         <div className="mx-auto max-w-3xl [perspective:1800px]">
           <div
             className={[
-              'relative aspect-[4/3] select-none overflow-hidden rounded-xl border border-black/10 bg-neutral-100 shadow-[inset_0_0_60px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-neutral-950 dark:shadow-[inset_0_0_60px_rgba(0,0,0,0.35)]',
+              `relative aspect-[4/3] select-none ${ui.surfaceDocWell}`,
               phase === 'idle' ? 'cursor-pointer' : 'pointer-events-none cursor-default',
             ].join(' ')}
             onClick={(e) => {

@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "mockups:hospice-social": "node scripts/generate-hospice-phone-mockups.mjs",
+    "mockups:hospice-brochure": "node scripts/generate-hospice-brochure-mockup.mjs",
+    "mockups:morva-coffee": "node scripts/generate-morva-coffee-mockup.mjs",
+    "mockups:nova-apparel": "node scripts/generate-nova-apparel-mockup.mjs"
   },
   "dependencies": {
     "react": "^19.2.4",
@@ -28,6 +32,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "postcss": "^8.5.8",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.2.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",

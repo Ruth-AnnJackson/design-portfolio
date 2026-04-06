@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Too large for GitHub (>100 MB); keep locally or host elsewhere
+public/assets/publications/pastors-appreciation/official-pastors-appreciation-portrait-colored.pdf

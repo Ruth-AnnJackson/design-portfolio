@@ -1,4 +1,5 @@
 import { SITE_EMAIL, SITE_EMAIL_MAILTO } from '../content/site'
+import { ui } from '../ui/classes'
 
 export function Contact() {
   return (
@@ -12,7 +13,7 @@ export function Contact() {
         </p>
       </header>
 
-      <section className="grid gap-5 rounded-2xl border border-black/10 bg-black/[0.02] p-6 dark:border-white/10 dark:bg-white/5 md:grid-cols-2">
+      <section className={`grid gap-5 p-6 md:grid-cols-2 ${ui.surfaceSection}`}>
         <div className="space-y-2">
           <div className="text-sm font-semibold text-neutral-900 dark:text-white">Email</div>
           <a
@@ -47,11 +48,7 @@ export function Contact() {
               <div className="mb-1 text-xs font-semibold text-neutral-600 dark:text-neutral-300">
                 Name
               </div>
-              <input
-                name="name"
-                className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-neutral-900 outline-none ring-0 placeholder:text-neutral-400 focus:border-black/20 dark:border-white/10 dark:bg-neutral-950/60 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-white/20"
-                placeholder="Your name"
-              />
+              <input name="name" className={ui.input} placeholder="Your name" />
             </label>
             <label className="block">
               <div className="mb-1 text-xs font-semibold text-neutral-600 dark:text-neutral-300">
@@ -59,14 +56,11 @@ export function Contact() {
               </div>
               <textarea
                 name="message"
-                className="min-h-28 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-black/20 dark:border-white/10 dark:bg-neutral-950/60 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-white/20"
+                className={ui.textarea}
                 placeholder="What do you need designed?"
               />
             </label>
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-xl bg-neutral-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-            >
+            <button type="submit" className={ui.btnPrimarySm}>
               Email me
             </button>
           </form>

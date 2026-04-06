@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ui } from '../ui/classes'
 
 const aboutIntro =
   'I’m a graphic designer and content creator based in Florida, United States. Over the past five years, I’ve focused on modern, purposeful work across digital and print—event and promo flyers, social and campaign graphics, logo and identity pieces, and short-form promotional video when motion tells the story best.'
@@ -21,9 +22,9 @@ export function About() {
         </div>
       </header>
 
-      <section className="grid gap-6 rounded-2xl border border-black/10 bg-black/[0.02] p-6 dark:border-white/10 dark:bg-white/5 md:grid-cols-12 md:items-center">
+      <section className={`grid gap-6 p-6 md:grid-cols-12 md:items-center ${ui.surfaceSection}`}>
         <div className="md:col-span-4">
-          <div className="aspect-square overflow-hidden rounded-2xl border border-black/10 bg-gradient-to-br from-fuchsia-500/15 via-cyan-400/10 to-amber-300/10 dark:border-white/10">
+          <div className={`aspect-square ${ui.surfacePortrait}`}>
             {imgOk ? (
               <img
                 src="/profile.png"
@@ -60,10 +61,7 @@ export function About() {
               'Social graphics',
               'Presentation mockups',
             ].map((x) => (
-              <div
-                key={x}
-                className="rounded-xl border border-black/10 bg-neutral-100/80 px-4 py-3 text-sm text-neutral-800 dark:border-white/10 dark:bg-neutral-950/40 dark:text-neutral-200"
-              >
+              <div key={x} className={ui.pillBlock}>
                 {x}
               </div>
             ))}

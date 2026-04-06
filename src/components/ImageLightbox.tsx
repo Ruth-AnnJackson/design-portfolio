@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { ui } from '../ui/classes'
 
 type ImageLightboxProps = {
   src: string | null
@@ -23,7 +24,7 @@ export function ImageLightbox({
   canPrev = false,
   canNext = false,
   zIndexClass = 'z-[60]',
-  imgClassName = 'max-h-[85vh] w-auto max-w-[95vw] rounded-2xl border border-neutral-200 bg-white object-contain dark:border-white/10 dark:bg-neutral-950',
+  imgClassName = ui.lightboxImage,
 }: ImageLightboxProps) {
   const swipeStartX = useRef<number | null>(null)
 
@@ -62,7 +63,7 @@ export function ImageLightbox({
     >
       <button
         type="button"
-        className="absolute right-4 top-4 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
+        className={`absolute right-4 top-4 ${ui.btnOverlay}`}
         onClick={(e) => {
           e.stopPropagation()
           onClose()
@@ -75,7 +76,7 @@ export function ImageLightbox({
         <button
           type="button"
           aria-label="Previous"
-          className="absolute left-4 top-1/2 -translate-y-1/2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
+          className={`absolute left-4 top-1/2 -translate-y-1/2 ${ui.btnOverlay}`}
           onClick={(e) => {
             e.stopPropagation()
             onPrev?.()
@@ -89,7 +90,7 @@ export function ImageLightbox({
         <button
           type="button"
           aria-label="Next"
-          className="absolute right-4 top-1/2 -translate-y-1/2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
+          className={`absolute right-4 top-1/2 -translate-y-1/2 ${ui.btnOverlay}`}
           onClick={(e) => {
             e.stopPropagation()
             onNext?.()
