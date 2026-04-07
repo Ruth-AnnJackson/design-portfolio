@@ -12,7 +12,7 @@ export function Work() {
           Work
         </h1>
         <p className="max-w-2xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-300 md:text-base">
-          By category. Same order as on disk.
+          Browse by discipline—branding, flyers, logos, motion, photo, publications, stationery, and video.
         </p>
       </header>
 

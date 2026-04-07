@@ -1,15 +1,14 @@
 import { Link } from 'react-router-dom'
-import type { Project } from '../content/projects'
+import { projectOpensInLightbox, type Project } from '../content/projects'
 import { ui } from '../ui/classes'
 import { CoverMedia } from './CoverMedia'
 import { PortfolioMockup } from './PortfolioMockup'
 
-export function ProjectCard({ project }: { project: Project }) {
+const cardClass = `group w-full overflow-hidden text-left ${ui.surfaceCard} ${ui.surfaceCardHover}`
+
+function CardBody({ project }: { project: Project }) {
   return (
-    <Link
-      to={`/projects/${project.id}`}
-      className={`group overflow-hidden ${ui.surfaceCard} ${ui.surfaceCardHover}`}
-    >
+    <>
       <PortfolioMockup>
         <div className="aspect-[4/3] overflow-hidden bg-neutral-100 dark:bg-neutral-950">
           <CoverMedia
@@ -35,7 +34,33 @@ export function ProjectCard({ project }: { project: Project }) {
             </span>
           ))}
         </div>
+        {projectOpensInLightbox(project) ? (
+          <p className="text-xs text-neutral-500 dark:text-neutral-500">Click to enlarge</p>
+        ) : null}
       </div>
+    </>
+  )
+}
+
+export function ProjectCard({
+  project,
+  onOpenLightbox,
+}: {
+  project: Project
+  /** When set and `project.lightboxOnly`, card opens lightbox instead of navigating. */
+  onOpenLightbox?: (project: Project) => void
+}) {
+  if (projectOpensInLightbox(project) && onOpenLightbox) {
+    return (
+      <button type="button" onClick={() => onOpenLightbox(project)} className={cardClass}>
+        <CardBody project={project} />
+      </button>
+    )
+  }
+
+  return (
+    <Link to={`/projects/${project.id}`} className={cardClass}>
+      <CardBody project={project} />
     </Link>
   )
 }

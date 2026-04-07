@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { BookPages } from '../components/BookPages'
 import { BrochureMockup } from '../components/BrochureMockup'
 import { PortfolioMockup } from '../components/PortfolioMockup'
-import { getProjectById } from '../content/projects'
+import { getPrimaryGalleryImageSrc, getProjectById } from '../content/projects'
 import { getCategoryBySlug } from '../content/services'
 import { FlipCard } from '../components/FlipCard'
 import { ImageLightbox } from '../components/ImageLightbox'
@@ -14,6 +14,7 @@ const subtleText = 'text-neutral-500 dark:text-neutral-400'
 
 export function ProjectDetail() {
   const { projectId } = useParams()
+  const navigate = useNavigate()
   const project = useMemo(
     () => (projectId ? getProjectById(projectId) : undefined),
     [projectId],
@@ -71,6 +72,20 @@ export function ProjectDetail() {
           Back to work
         </Link>
       </div>
+    )
+  }
+
+  if (project.lightboxOnly) {
+    const src = getPrimaryGalleryImageSrc(project)
+    const backSlug = project.services[0] ?? 'flyers'
+    if (!src) {
+      return <Navigate to={`/work/${backSlug}`} replace />
+    }
+    return (
+      <ImageLightbox
+        src={src}
+        onClose={() => navigate(`/work/${backSlug}`, { replace: true })}
+      />
     )
   }
 
@@ -205,8 +220,106 @@ export function ProjectDetail() {
             )
           }
 
+          if ('kind' in item && item.kind === 'brochureRow') {
+            const rowSources = [
+              item.studio.src,
+              ...(item.logo ? [item.logo.src] : []),
+              item.brochure.cover.src,
+              item.brochure.inside.src,
+            ]
+
+            return (
+              <div
+                key={item.id}
+                className={`overflow-hidden sm:col-span-2 ${ui.surfaceGroup}`}
+              >
+                <div className={`p-4 ${ui.dividerBottom}`}>
+                  <div className="text-base font-semibold text-neutral-900 dark:text-white">
+                    {item.title ?? 'Tri-fold brochure'}
+                  </div>
+                  {item.summary ? (
+                    <div className={`mt-1 text-xs ${subtleText}`}>{item.summary}</div>
+                  ) : null}
+                </div>
+
+                <div className="p-4 sm:p-6">
+                  <div
+                    className={
+                      item.logo
+                        ? 'grid gap-6 sm:grid-cols-2 sm:items-start'
+                        : 'grid grid-cols-1'
+                    }
+                  >
+                    <BrochureMockup
+                      variant="inline"
+                      cover={item.brochure.cover}
+                      inside={item.brochure.inside}
+                      caption={item.brochure.caption}
+                      onExpand={(src) => {
+                        setLightboxFromSources(rowSources, Math.max(0, rowSources.indexOf(src)))
+                      }}
+                    />
+                    {item.logo ? (
+                      <div className="flex min-w-0 flex-col gap-3">
+                        <PortfolioMockup className={ui.mockupHoverLift}>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setLightboxFromSources(
+                                rowSources,
+                                rowSources.indexOf(item.logo!.src),
+                              )
+                            }
+                            className="group w-full cursor-zoom-in text-left"
+                          >
+                            <div
+                              className={`flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl ${mediaWell} p-6 sm:p-8`}
+                            >
+                              <img
+                                src={item.logo.src}
+                                alt={item.logo.alt}
+                                className="max-h-full max-w-full object-contain transition duration-500 group-hover:scale-[1.02]"
+                                loading="lazy"
+                              />
+                            </div>
+                          </button>
+                        </PortfolioMockup>
+                        <p className={`text-xs ${subtleText}`}>Logo mark</p>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className={`p-4 ${ui.dividerTop} sm:p-6`}>
+                  <PortfolioMockup className={`${ui.mockupHoverLift} w-full max-w-none`}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setLightboxFromSources(rowSources, rowSources.indexOf(item.studio.src))
+                      }
+                      className="group w-full cursor-zoom-in text-left"
+                    >
+                      <div
+                        className={`w-full overflow-hidden rounded-xl ${mediaWell} p-2 sm:p-4`}
+                      >
+                        <img
+                          src={item.studio.src}
+                          alt={item.studio.alt}
+                          className="mx-auto h-auto max-h-[min(92vh,980px)] w-full max-w-full object-contain transition duration-500 group-hover:scale-[1.005]"
+                          loading="lazy"
+                        />
+                      </div>
+                    </button>
+                  </PortfolioMockup>
+                  <p className={`mt-3 text-xs ${subtleText}`}>Brochure mockup on wood</p>
+                </div>
+              </div>
+            )
+          }
+
           if ('kind' in item && item.kind === 'group') {
             const cover = item.cover ?? item.items[0]
+            const wide = item.wideMockup === true
 
             return (
               <div
@@ -243,7 +356,13 @@ export function ProjectDetail() {
                 </div>
 
                 <div className={`p-4 ${ui.dividerTop}`}>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div
+                    className={
+                      wide
+                        ? 'grid grid-cols-1 gap-6'
+                        : 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3'
+                    }
+                  >
                     {item.items.map((img, idx) => (
                       <button
                         key={img.src}
@@ -254,12 +373,28 @@ export function ProjectDetail() {
                         }}
                         className="group w-full cursor-zoom-in text-left"
                       >
-                        <PortfolioMockup className={ui.mockupHoverLift}>
-                          <div className={`aspect-[4/3] overflow-hidden ${mediaWell}`}>
+                        <PortfolioMockup
+                          className={
+                            wide
+                              ? `${ui.mockupHoverLift} w-full max-w-none`
+                              : ui.mockupHoverLift
+                          }
+                        >
+                          <div
+                            className={
+                              wide
+                                ? `w-full overflow-hidden rounded-xl ${mediaWell} p-2 sm:p-4`
+                                : `aspect-[4/3] overflow-hidden ${mediaWell}`
+                            }
+                          >
                             <img
                               src={img.src}
                               alt={img.alt}
-                              className="h-full w-full object-contain p-2 transition duration-500 group-hover:scale-[1.01] sm:p-3"
+                              className={
+                                wide
+                                  ? 'mx-auto h-auto max-h-[min(92vh,980px)] w-full max-w-full object-contain transition duration-500 group-hover:scale-[1.005]'
+                                  : 'h-full w-full object-contain p-2 transition duration-500 group-hover:scale-[1.01] sm:p-3'
+                              }
                               loading="lazy"
                             />
                           </div>

@@ -1,8 +1,13 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
+import { ImageLightbox } from '../components/ImageLightbox'
 import { MotionClipCard } from '../components/MotionClipCard'
 import { ProjectCard } from '../components/ProjectCard'
-import { getMotionClipsForCategory, getProjectsForCategory } from '../content/projects'
+import {
+  getMotionClipsForCategory,
+  getPrimaryGalleryImageSrc,
+  getProjectsForCategory,
+} from '../content/projects'
 import { SERVICE_SLUGS, getCategoryBySlug, type ServiceSlug } from '../content/services'
 
 function isCategorySlug(s: string): s is ServiceSlug {
@@ -11,6 +16,7 @@ function isCategorySlug(s: string): s is ServiceSlug {
 
 export function WorkCategory() {
   const { categorySlug } = useParams()
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
 
   const category = useMemo(() => {
     if (!categorySlug || !isCategorySlug(categorySlug)) return undefined
@@ -75,7 +81,14 @@ export function WorkCategory() {
           </h2>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {categoryProjects.map((p) => (
-              <ProjectCard key={p.id} project={p} />
+              <ProjectCard
+                key={p.id}
+                project={p}
+                onOpenLightbox={(proj) => {
+                  const src = getPrimaryGalleryImageSrc(proj)
+                  if (src) setLightboxSrc(src)
+                }}
+              />
             ))}
           </div>
         </section>
@@ -99,6 +112,8 @@ export function WorkCategory() {
           ← Work
         </Link>
       </p>
+
+      <ImageLightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
     </div>
   )
 }

@@ -28,6 +28,8 @@ export type Project = {
         summary?: string
         cover?: { src: string; alt: string }
         items: { src: string; alt: string }[]
+        /** Wide PNG (e.g. phone strip) — full container width, natural image aspect. */
+        wideMockup?: boolean
       }
     | {
         kind: 'book'
@@ -41,8 +43,27 @@ export type Project = {
         inside: { src: string; alt: string }
         caption?: string
       }
+    | {
+        kind: 'brochureRow'
+        id: string
+        title?: string
+        summary?: string
+        /** Shown beside the flip mockup on the first row (optional). */
+        logo?: { src: string; alt: string }
+        studio: { src: string; alt: string }
+        brochure: {
+          cover: { src: string; alt: string }
+          inside: { src: string; alt: string }
+          caption?: string
+        }
+      }
   )[]
   downloads?: { label: string; href: string }[]
+  /**
+   * When true, the category grid opens a fullscreen lightbox instead of `/projects/:id`.
+   * Use for single-board studies where a detail page would be redundant.
+   */
+  lightboxOnly?: boolean
 }
 
 export const projects: Project[] = [
@@ -84,58 +105,45 @@ export const projects: Project[] = [
         ],
       },
       {
-        kind: 'group',
+        kind: 'brochureRow',
         id: 'hospice-trifold',
         title: 'Tri-fold brochure',
-        summary: 'Cover + inside on a real wood surface; flat spreads below for detail.',
-        cover: {
-          src: '/assets/branding/unity-hospice/tri-fold-studio-mockup.png',
-          alt: 'Unity Hospice tri-fold — cover and inside on wood (photo mockup)',
+        summary: 'Logo and flat mockup on one row; wood studio mockup full width below.',
+        logo: {
+          src: '/assets/branding/unity-hospice/hospice-logo-mark.jpg',
+          alt: 'Unity Hospice — logo mark (heart and hands)',
         },
-        items: [
-          {
-            src: '/assets/branding/unity-hospice/tri-fold-studio-mockup.png',
-            alt: 'Unity Hospice tri-fold brochure — photo mockup on wood',
-          },
-          {
+        studio: {
+          src: '/assets/branding/unity-hospice/tri-fold-studio-mockup.png',
+          alt: 'Brochure mockup on wood',
+        },
+        brochure: {
+          cover: {
             src: '/assets/branding/unity-hospice/Tri-Fold Brochure.png',
             alt: 'Tri-fold cover (flat)',
           },
-          {
+          inside: {
             src: '/assets/branding/unity-hospice/tri-fold-inside.png',
             alt: 'Tri-fold inside spread — What Is Hospice Care? (flat)',
           },
-        ],
+          caption: 'Tri-fold brochure (flat) — click mockup to flip',
+        },
       },
       {
         kind: 'group',
         id: 'hospice-social',
         title: 'Social media campaign',
-        summary: 'Studio phone mockups — in-feed style framing.',
+        wideMockup: true,
+        summary:
+          'Five-slide carousel strip — same 4:5 art in a row; slide 3 in-feed, 1–2 and 4–5 beside the device.',
         cover: {
-          src: '/assets/branding/unity-hospice/mockups/mockup-social-01-overview.png',
-          alt: 'Unity Hospice social — campaign overview in phone mockup',
+          src: '/assets/branding/unity-hospice/mockups/mockup-social-carousel.png',
+          alt: 'Unity Hospice social — five-tile carousel strip mockup (slide 3 on phone)',
         },
         items: [
           {
-            src: '/assets/branding/unity-hospice/mockups/mockup-social-01-overview.png',
-            alt: 'Unity Hospice social — campaign overview, phone mockup',
-          },
-          {
-            src: '/assets/branding/unity-hospice/mockups/mockup-social-02.png',
-            alt: 'Unity Hospice social — post 2 of 5, phone mockup',
-          },
-          {
-            src: '/assets/branding/unity-hospice/mockups/mockup-social-03.png',
-            alt: 'Unity Hospice social — post 3 of 5, phone mockup',
-          },
-          {
-            src: '/assets/branding/unity-hospice/mockups/mockup-social-04.png',
-            alt: 'Unity Hospice social — post 4 of 5, phone mockup',
-          },
-          {
-            src: '/assets/branding/unity-hospice/mockups/mockup-social-05.png',
-            alt: 'Unity Hospice social — post 5 of 5, phone mockup',
+            src: '/assets/branding/unity-hospice/mockups/mockup-social-carousel.png',
+            alt: 'Unity Hospice social — five-tile carousel strip mockup (slide 3 on phone)',
           },
         ],
       },
@@ -251,6 +259,7 @@ export const projects: Project[] = [
     tags: ['Publication', 'Church', 'Layout'],
     services: ['publications'],
     year: '2025',
+    lightboxOnly: true,
     coverImage: '/assets/publications/ntcg-wdm/lorna-campbell-secretary-appointment.png',
     gallery: [
       {
@@ -266,6 +275,7 @@ export const projects: Project[] = [
     tags: ['Publication', 'Church', 'Print'],
     services: ['publications'],
     year: '2023',
+    lightboxOnly: true,
     coverImage: '/assets/publications/pastors-appreciation/pastors-appreciation-portrait-preview.jpg',
     gallery: [
       {
@@ -298,11 +308,82 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: 'ignite-conference-promo',
+    title: 'Ignite Conference',
+    summary: 'Official 2023 conference promo video.',
+    tags: ['Event', 'Video'],
+    services: ['video'],
+    year: '2023',
+    coverVideo: `/assets/video-production/ignite-conference/${encodeURIComponent('OFFICIAL IGNITE CONFERENCE 2023 PROMO VIDEO.mov')}`,
+    gallery: [
+      {
+        kind: 'video',
+        src: `/assets/video-production/ignite-conference/${encodeURIComponent('OFFICIAL IGNITE CONFERENCE 2023 PROMO VIDEO.mov')}`,
+        alt: 'Ignite Conference 2023 — official promo video',
+      },
+    ],
+  },
+  {
+    id: 'ignite-conference-flyers',
+    title: 'Ignite Conference',
+    summary: '2022–2023 conference flyers, save-the-date, and Prayer Breakfast print pieces.',
+    tags: ['Event', 'Flyer', 'Print'],
+    services: ['flyers'],
+    year: '2022',
+    coverImage: '/assets/flyers-events/ignite-conference/ignite-main-flyer.png',
+    gallery: [
+      {
+        src: '/assets/flyers-events/ignite-conference/ignite-main-flyer.png',
+        alt: 'Ignite Conference — main flyer (2022)',
+      },
+      {
+        src: '/assets/flyers-events/ignite-conference/ignite-2023-main-flyer.png',
+        alt: 'Ignite Conference 2023 — main flyer',
+      },
+      {
+        src: '/assets/flyers-events/ignite-conference/ignite-2023-save-the-date.png',
+        alt: 'Ignite Conference 2023 — save the date',
+      },
+      {
+        src: '/assets/flyers-events/ignite-conference/ignite-2022-circular-badge.png',
+        alt: 'Ignite Conference 2022 — circular flame emblem',
+      },
+      {
+        src: '/assets/flyers-events/ignite-conference/ignite-2023-circular-badge.png',
+        alt: 'Ignite Conference 2023 — circular flame emblem',
+      },
+      {
+        src: '/assets/flyers-events/ignite-conference/ignite-a4-flyer-mockup.png',
+        alt: 'Ignite Conference — A4 flyer mockup',
+      },
+      {
+        src: '/assets/flyers-events/ignite-conference/ignite-landscape-mockup.png',
+        alt: 'Ignite Conference — landscape flyer mockup',
+      },
+      {
+        src: '/assets/flyers-events/ignite-conference/prayer-breakfast-flyer.png',
+        alt: 'Ignite Prayer Breakfast — flyer',
+      },
+      {
+        src: '/assets/flyers-events/ignite-conference/prayer-breakfast-landscape.png',
+        alt: 'Ignite Prayer Breakfast — landscape flyer',
+      },
+      {
+        src: '/assets/flyers-events/ignite-conference/prayer-breakfast-floating-tickets.png',
+        alt: 'Ignite Prayer Breakfast — floating ticket mockup',
+      },
+      {
+        src: '/assets/flyers-events/ignite-conference/prayer-breakfast-tickets-sheet.png',
+        alt: 'Ignite Prayer Breakfast — tickets sheet',
+      },
+    ],
+  },
+  {
     id: 'ignite-conference',
     title: 'Ignite Conference',
-    summary: '2022–2023 event suite—flyers, circular marks, programme PDF, and apparel mockups.',
-    tags: ['Event', 'Flyer', 'Mockups', 'Print', 'Publication'],
-    services: ['flyers', 'publications'],
+    summary: '2022–2023 event suite—flyers, circular marks, programme PDF, apparel mockups, and promo video.',
+    tags: ['Event', 'Flyer', 'Mockups', 'Print', 'Branding', 'Video'],
+    services: ['branding'],
     year: '2022',
     coverImage: '/assets/flyers-events/ignite-conference/ignite-main-flyer.png',
     downloads: [
@@ -312,6 +393,11 @@ export const projects: Project[] = [
       },
     ],
     gallery: [
+      {
+        kind: 'video',
+        src: `/assets/video-production/ignite-conference/${encodeURIComponent('OFFICIAL IGNITE CONFERENCE 2023 PROMO VIDEO.mov')}`,
+        alt: 'Ignite Conference 2023 — official promo video',
+      },
       {
         kind: 'group',
         id: 'ignite-2022',
@@ -352,7 +438,7 @@ export const projects: Project[] = [
         kind: 'group',
         id: 'ignite-2023',
         title: 'Ignite 2023',
-        summary: 'Main flyer, circular mark, guests, schedule, and conference tee mockups.',
+        summary: 'Main flyer, save-the-date, circular mark, guests, schedule, and more.',
         cover: {
           src: '/assets/flyers-events/ignite-conference/ignite-2023-main-flyer.png',
           alt: 'Ignite Conference 2023 — main flyer',
@@ -361,6 +447,10 @@ export const projects: Project[] = [
           {
             src: '/assets/flyers-events/ignite-conference/ignite-2023-main-flyer.png',
             alt: 'Ignite Conference 2023 — main flyer',
+          },
+          {
+            src: '/assets/flyers-events/ignite-conference/ignite-2023-save-the-date.png',
+            alt: 'Ignite Conference 2023 — save the date',
           },
           {
             src: '/assets/flyers-events/ignite-conference/ignite-2023-circular-badge.png',
@@ -390,15 +480,19 @@ export const projects: Project[] = [
             src: '/assets/flyers-events/ignite-conference/ignite-2023-schedule.png',
             alt: 'Ignite 2023 — schedule overview',
           },
-          {
-            src: '/assets/flyers-events/ignite-conference/ignite-conference-tshirt-front-mockup.png',
-            alt: 'Ignite Conference — NTCG Faith Tabernacle tee, front mockup',
-          },
-          {
-            src: '/assets/flyers-events/ignite-conference/ignite-conference-tshirt-back-mockup.png',
-            alt: 'Ignite Conference — circular “Catch the Fire” mark, tee back mockup',
-          },
         ],
+      },
+      {
+        kind: 'pair',
+        label: 'Conference tee mockup',
+        front: {
+          src: '/assets/flyers-events/ignite-conference/ignite-conference-tshirt-front-mockup.png',
+          alt: 'Ignite Conference — NTCG Faith Tabernacle tee, front mockup',
+        },
+        back: {
+          src: '/assets/flyers-events/ignite-conference/ignite-conference-tshirt-back-mockup.png',
+          alt: 'Ignite Conference — circular “Catch the Fire” mark, tee back mockup',
+        },
       },
     ],
   },
@@ -420,7 +514,7 @@ export const projects: Project[] = [
   {
     id: 'vbs-logos',
     title: 'VBS Logos (2022–2023)',
-    summary: 'VBS marks and flyer.',
+    summary: 'VBS marks (2022–2023).',
     tags: ['Logo Design', 'Event', 'Print'],
     services: ['logos'],
     year: '2023',
@@ -432,7 +526,22 @@ export const projects: Project[] = [
       },
       { src: '/assets/logo-design/vbs-logos/vbs-lighthouse-logo.png', alt: 'VBS — lighthouse logo' },
       { src: '/assets/logo-design/vbs-logos/vbs-2022-logo.png', alt: 'VBS 2022 — official logo' },
-      { src: '/assets/logo-design/vbs-logos/vbs-2022-flyer.png', alt: 'VBS 2022 — official flyer' },
+    ],
+  },
+  {
+    id: 'vbs-2022-official-flyer',
+    title: 'VBS 2022 — official flyer',
+    summary: 'Vacation Bible School promotional flyer.',
+    tags: ['Flyer', 'Church', 'Print'],
+    services: ['flyers'],
+    year: '2022',
+    lightboxOnly: true,
+    coverImage: '/assets/logo-design/vbs-logos/vbs-2022-flyer.png',
+    gallery: [
+      {
+        src: '/assets/logo-design/vbs-logos/vbs-2022-flyer.png',
+        alt: 'VBS 2022 — official flyer',
+      },
     ],
   },
   {
@@ -451,6 +560,134 @@ export const projects: Project[] = [
       {
         src: '/assets/flyers-events/event-templates-mockups/discussion-forum-template.png',
         alt: 'Discussion forum / online meeting promotional template',
+      },
+    ],
+  },
+  {
+    id: 'flyer-study-sales',
+    title: 'Retail sale flyer',
+    summary: 'End-of-season promotion layout—bold type and sale tape accents.',
+    tags: ['Flyer', 'Retail', 'Print'],
+    services: ['flyers'],
+    year: '2025',
+    lightboxOnly: true,
+    coverImage: '/assets/flyers-events/design-specimens/sales-flyer.png',
+    gallery: [
+      {
+        src: '/assets/flyers-events/design-specimens/sales-flyer.png',
+        alt: 'Retail sale flyer — BIG SALE, up to 70% off',
+      },
+    ],
+  },
+  {
+    id: 'flyer-study-restaurant',
+    title: 'Restaurant promo flyer',
+    summary: 'Pizza party deals—photography-forward menu promo.',
+    tags: ['Flyer', 'Food', 'Print'],
+    services: ['flyers'],
+    year: '2025',
+    lightboxOnly: true,
+    coverImage: '/assets/flyers-events/design-specimens/restaurant-flyer.png',
+    gallery: [
+      {
+        src: '/assets/flyers-events/design-specimens/restaurant-flyer.png',
+        alt: 'Taste House Pizza — party deals and offers',
+      },
+    ],
+  },
+  {
+    id: 'flyer-study-fitness',
+    title: 'Fitness / gym flyer',
+    summary: 'Gym membership promo with offer bar and feature bullets.',
+    tags: ['Flyer', 'Fitness', 'Print'],
+    services: ['flyers'],
+    year: '2025',
+    lightboxOnly: true,
+    coverImage: '/assets/flyers-events/design-specimens/fitness-flyer.png',
+    gallery: [
+      {
+        src: '/assets/flyers-events/design-specimens/fitness-flyer.png',
+        alt: 'IronPulse gym — join now and membership offer',
+      },
+    ],
+  },
+  {
+    id: 'flyer-study-educational',
+    title: 'Educational workshop flyer',
+    summary: 'Tech workshop poster—schedule blocks and registration CTA.',
+    tags: ['Flyer', 'Education', 'Event'],
+    services: ['flyers'],
+    year: '2025',
+    lightboxOnly: true,
+    coverImage: '/assets/flyers-events/design-specimens/educational-flyer.png',
+    gallery: [
+      {
+        src: '/assets/flyers-events/design-specimens/educational-flyer.png',
+        alt: 'Free coding workshop — date, speaker, and topics',
+      },
+    ],
+  },
+  {
+    id: 'flyer-study-typography',
+    title: 'Typography-led event flyer',
+    summary: 'Type-first nightlife poster with watermark texture.',
+    tags: ['Flyer', 'Typography', 'Event'],
+    services: ['flyers'],
+    year: '2025',
+    lightboxOnly: true,
+    coverImage: '/assets/flyers-events/design-specimens/typography-flyer.png',
+    gallery: [
+      {
+        src: '/assets/flyers-events/design-specimens/typography-flyer.png',
+        alt: 'One Night Only — event details',
+      },
+    ],
+  },
+  {
+    id: 'flyer-study-event',
+    title: 'Summer night event flyer',
+    summary: 'DJ-forward summer bash with layered badges and ticket line.',
+    tags: ['Flyer', 'Event', 'Music'],
+    services: ['flyers'],
+    year: '2025',
+    lightboxOnly: true,
+    coverImage: '/assets/flyers-events/design-specimens/event-flyer.png',
+    gallery: [
+      {
+        src: '/assets/flyers-events/design-specimens/event-flyer.png',
+        alt: 'Summer Night Bash 2025 — DJ and venue details',
+      },
+    ],
+  },
+  {
+    id: 'flyer-study-sports',
+    title: 'Sports / fight night flyer',
+    summary: 'Landscape matchup graphic with fighters and broadcast line.',
+    tags: ['Flyer', 'Sports', 'Print'],
+    services: ['flyers'],
+    year: '2025',
+    lightboxOnly: true,
+    coverImage: '/assets/flyers-events/design-specimens/sports-flyer.png',
+    gallery: [
+      {
+        src: '/assets/flyers-events/design-specimens/sports-flyer.png',
+        alt: 'Ultimate Fight Night — Santos vs Rivers',
+      },
+    ],
+  },
+  {
+    id: 'flyer-study-service',
+    title: 'Home services flyer',
+    summary: 'Repair brand one-sheet—photo hero, services list, and booking CTA.',
+    tags: ['Flyer', 'Services', 'Print'],
+    services: ['flyers'],
+    year: '2025',
+    lightboxOnly: true,
+    coverImage: '/assets/flyers-events/design-specimens/service-flyer.png',
+    gallery: [
+      {
+        src: '/assets/flyers-events/design-specimens/service-flyer.png',
+        alt: 'We Fix It Fast — handyman and repair services',
       },
     ],
   },
@@ -527,14 +764,6 @@ export const projects: Project[] = [
             src: '/assets/logo-design/modern-minimalist-logos/more/morva-logo.png',
             alt: 'Morva Coffee — logo',
           },
-          {
-            src: '/assets/logo-design/modern-minimalist-logos/more/morva-coffee-packaging-mockup.png',
-            alt: 'Morva Coffee — logo on kraft bag and paper cup (studio mockup)',
-          },
-          {
-            src: '/assets/logo-design/modern-minimalist-logos/more/morva-cup-mock.png',
-            alt: 'Morva Coffee — cup mockup',
-          },
         ],
       },
       {
@@ -545,18 +774,37 @@ export const projects: Project[] = [
           { src: '/assets/logo-design/modern-minimalist-logos/more/nexora-mark.png', alt: 'Nexora — mark' },
           { src: '/assets/logo-design/modern-minimalist-logos/more/nexora-wordmark.png', alt: 'Nexora — wordmark' },
           { src: '/assets/logo-design/modern-minimalist-logos/nexora-laptop.png', alt: 'Nexora — laptop mockup' },
-          { src: '/assets/logo-design/modern-minimalist-logos/more/alvera-tag.png', alt: 'Alvéra — tag design' },
+          {
+            src: '/assets/logo-design/modern-minimalist-logos/more/alvera-tag.png',
+            alt: 'Nexora — tag design',
+          },
+        ],
+      },
+      {
+        kind: 'group',
+        id: 'velora',
+        title: 'Velora',
+        items: [
+          {
+            src: '/assets/logo-design/modern-minimalist-logos/more/ar-realty-logo.png',
+            alt: 'Velora — mockup',
+          },
         ],
       },
       {
         kind: 'group',
         id: 'ar',
-        title: 'AR',
+        title: 'AR Realty',
         items: [
-          { src: '/assets/logo-design/modern-minimalist-logos/more/ar-realty-logo.png', alt: 'AR Realty — logo' },
-          { src: '/assets/logo-design/modern-minimalist-logos/more/nexora-laptop-mock.png', alt: 'Nexora — laptop mockup (variant)' },
+          {
+            src: '/assets/logo-design/modern-minimalist-logos/more/nexora-laptop-mock.png',
+            alt: 'AR Realty — logo',
+          },
           { src: '/assets/logo-design/modern-minimalist-logos/ar-realty-card.png', alt: 'AR Realty — business card' },
-          { src: '/assets/logo-design/modern-minimalist-logos/more/alvera-hangtag-mock.png', alt: 'Alvéra — hangtag mockup' },
+          {
+            src: '/assets/logo-design/modern-minimalist-logos/more/alvera-hangtag-mock.png',
+            alt: 'AR Realty — signage mockup',
+          },
         ],
       },
       {
@@ -564,9 +812,13 @@ export const projects: Project[] = [
         id: 'alvera',
         title: 'Alvéra',
         items: [
-          { src: '/assets/logo-design/modern-minimalist-logos/more/ar-realty-sign-mock.png', alt: 'AR Realty — signage mockup' },
+          {
+            src: '/assets/logo-design/modern-minimalist-logos/more/ar-realty-sign-mock.png',
+            alt: 'Alvéra — signage mockup',
+          },
           { src: '/assets/logo-design/modern-minimalist-logos/more/alvera-wordmark.png', alt: 'Alvéra — wordmark' },
-          { src: '/assets/logo-design/modern-minimalist-logos/more/alvera-fabric-mock.png', alt: 'Alvéra — fabric label mockup' },
+          { src: '/assets/logo-design/modern-minimalist-logos/more/alvera-fabric-mock.png', alt: 'Alvéra — clothing tag mockup' },
+          { src: '/assets/logo-design/modern-minimalist-logos/more/morva-cup-mock.png', alt: 'Alvéra — clothing label mockup' },
         ],
       },
       {
@@ -574,7 +826,7 @@ export const projects: Project[] = [
         id: 'ironvault',
         title: 'Ironvault',
         items: [
-          { src: '/assets/logo-design/modern-minimalist-logos/more/alvera-label-mock.png', alt: 'Alvéra — label mockup' },
+          { src: '/assets/logo-design/modern-minimalist-logos/more/alvera-label-mock.png', alt: 'Ironvault — mockup' },
           { src: '/assets/logo-design/modern-minimalist-logos/more/ironvault-logo.png', alt: 'Ironvault — logo' },
         ],
       },
@@ -643,16 +895,12 @@ export const projects: Project[] = [
   {
     id: 'nova-street',
     title: 'NOVA Street',
-    summary: 'Streetwear logo set—photoreal tee mockups plus flat artwork.',
-    tags: ['Apparel', 'Branding', 'Logo Design', 'Mockups'],
+    summary: 'Streetwear logo set—logotype, mark, and lockup.',
+    tags: ['Apparel', 'Branding', 'Logo Design'],
     services: ['logos'],
     year: '2026',
-    coverImage: '/assets/logo-design/nova-street/nova-apparel-mockup.png',
+    coverImage: '/assets/logo-design/nova-street/NOVA01-03_lockup.png',
     gallery: [
-      {
-        src: '/assets/logo-design/nova-street/nova-apparel-mockup.png',
-        alt: 'NOVA Street — logo on photoreal t-shirt mockups (front, template, back)',
-      },
       { src: '/assets/logo-design/nova-street/NOVA01-01_logo.png', alt: 'NOVA logotype' },
       { src: '/assets/logo-design/nova-street/NOVA01-02_mark.png', alt: 'NOVA monogram mark' },
       { src: '/assets/logo-design/nova-street/NOVA01-03_lockup.png', alt: 'NOVA logo lockup' },
@@ -763,46 +1011,97 @@ export function getProjectById(projectId: string) {
   return projects.find((p) => p.id === projectId)
 }
 
-/**
- * Home page “Selected work” slideshow — hand-picked for breadth and impact:
- * healthcare system, motion study, flagship event suite, logo suite, beauty brand, ministry video.
- */
-export const FEATURED_PROJECT_IDS = [
-  'unity-hospice',
-  'motion-studies',
-  'ignite-conference',
-  'modern-minimalist-logos',
-  'velora',
-  'papine-worship-events',
-] as const
+export function projectOpensInLightbox(p: Project): boolean {
+  return p.lightboxOnly === true
+}
 
-export function getFeaturedProjects(): Project[] {
-  return FEATURED_PROJECT_IDS.map((id) => getProjectById(id)).filter(
-    (p): p is Project => p !== undefined,
-  )
+/** Cover image, else first simple image in the gallery. */
+export function getPrimaryGalleryImageSrc(p: Project): string | undefined {
+  if (p.coverImage) return p.coverImage
+  for (const item of p.gallery) {
+    if ('kind' in item && item.kind && item.kind !== 'image') continue
+    if ('src' in item) return item.src
+  }
+  return undefined
+}
+
+type HeroSlideConfig = {
+  projectId: string
+  coverImage?: string
+  coverVideo?: string
+}
+
+/** Home hero slideshow — order and optional cover overrides per slide. */
+const HERO_SLIDE_CONFIG: HeroSlideConfig[] = [
+  { projectId: 'motion-studies' },
+  {
+    projectId: 'delaine-harold-wedding',
+    coverImage: '/assets/stationery/wedding-package/invitation-official.png',
+  },
+  { projectId: 'vbs-logos' },
+  { projectId: 'event-templates-mockups' },
+  { projectId: 'flyer-study-sales' },
+  { projectId: 'brum-co' },
+  { projectId: 'photo-editing' },
+  {
+    projectId: 'ignite-conference',
+    coverImage: '/assets/flyers-events/ignite-conference/ignite-landscape-mockup.png',
+  },
+  {
+    projectId: 'ignite-conference',
+    coverImage: '/assets/flyers-events/ignite-conference/prayer-breakfast-floating-tickets.png',
+  },
+  {
+    projectId: 'ignite-conference',
+    coverImage: '/assets/flyers-events/ignite-conference/ignite-conference-tshirt-front-mockup.png',
+  },
+]
+
+function projectWithHeroOverrides(config: HeroSlideConfig): Project | undefined {
+  const base = getProjectById(config.projectId)
+  if (!base) return undefined
+  if (config.coverVideo !== undefined) {
+    return { ...base, coverVideo: config.coverVideo }
+  }
+  if (config.coverImage !== undefined) {
+    return { ...base, coverImage: config.coverImage, coverVideo: undefined }
+  }
+  return { ...base }
+}
+
+export function getHeroSlides(): { key: string; project: Project }[] {
+  return HERO_SLIDE_CONFIG.map((config, index) => {
+    const project = projectWithHeroOverrides(config)
+    if (!project) return null
+    return { key: `${config.projectId}-${index}`, project }
+  }).filter((x): x is { key: string; project: Project } => x !== null)
 }
 
 /** Curated display order per category (first = top). IDs not listed sort after, by year then title. */
-/** Order matches `public/assets/<category>/` subfolder names (A–Z), then project id for flat folders. */
 export const PROJECT_ORDER_BY_CATEGORY: Record<ServiceSlug, string[]> = {
-  branding: ['brum-co', 'mooncoffee', 'unity-hospice', 'velora'],
+  branding: ['brum-co', 'mooncoffee', 'unity-hospice', 'velora', 'ignite-conference'],
   flyers: [
     'event-templates-mockups',
-    'ignite-conference',
+    'flyer-study-sales',
+    'flyer-study-restaurant',
+    'flyer-study-fitness',
+    'flyer-study-educational',
+    'flyer-study-typography',
+    'flyer-study-event',
+    'flyer-study-sports',
+    'flyer-study-service',
+    'ignite-conference-flyers',
     'ntcg-womens-week-2022',
     'papine-church-flyers',
+    'vbs-2022-official-flyer',
     'youth-ministry-flyers',
   ],
   logos: ['modern-minimalist-logos', 'nova-street', 'thank-you-boxes', 'vbs-logos'],
   motion: ['motion-studies'],
   photo: ['photo-editing'],
-  publications: [
-    'wdm-lorna-campbell-appointment',
-    'pastors-appreciation-portrait',
-    'ignite-conference',
-  ],
+  publications: ['wdm-lorna-campbell-appointment', 'pastors-appreciation-portrait'],
   stationery: ['business-cards', 'delaine-harold-wedding'],
-  video: ['papine-worship-events', 'portfolio-video'],
+  video: ['ignite-conference-promo', 'papine-worship-events', 'portfolio-video'],
 }
 
 function compareProjectsDefault(a: Project, b: Project): number {
@@ -847,6 +1146,8 @@ function firstStaticImageFromGallery(gallery: Project['gallery']): { src: string
         return { src: item.front.src, alt: item.front.alt }
       case 'brochure':
         return { src: item.cover.src, alt: item.cover.alt }
+      case 'brochureRow':
+        return { src: item.studio.src, alt: item.studio.alt }
       case 'group':
         if (item.cover) return { src: item.cover.src, alt: item.cover.alt }
         if (item.items[0]) return { src: item.items[0].src, alt: item.items[0].alt }
@@ -867,8 +1168,8 @@ export type CategoryCardPreview =
   | { kind: 'image'; src: string; alt: string }
   | { kind: 'video'; src: string; poster?: string; alt: string; disclaimer?: string }
 
-/** One row per video file; `coverVideo` deduped against gallery. Order follows category project order, then gallery order. */
-export function getMotionClipsForCategory(): {
+/** One row per video file; `coverVideo` deduped against gallery. Order follows `projects` order, then gallery order. */
+function collectVideosFromProjects(projects: Project[]): {
   project: Project
   video: { src: string; poster?: string; alt: string; disclaimer?: string }
 }[] {
@@ -877,7 +1178,7 @@ export function getMotionClipsForCategory(): {
     video: { src: string; poster?: string; alt: string; disclaimer?: string }
   }[] = []
 
-  for (const p of getProjectsForCategory('motion')) {
+  for (const p of projects) {
     const seen = new Set<string>()
     const push = (
       src: string,
@@ -913,6 +1214,20 @@ export function getMotionClipsForCategory(): {
   return results
 }
 
+export function getMotionClipsForCategory(): {
+  project: Project
+  video: { src: string; poster?: string; alt: string; disclaimer?: string }
+}[] {
+  return collectVideosFromProjects(getProjectsForCategory('motion'))
+}
+
+export function getVideoClipsForCategory(): {
+  project: Project
+  video: { src: string; poster?: string; alt: string; disclaimer?: string }
+}[] {
+  return collectVideosFromProjects(getProjectsForCategory('video'))
+}
+
 /** Disclaimer for the clip used as `coverVideo` (e.g. hero / cards), if any. */
 export function disclaimerForCoverVideo(project: Project): string | undefined {
   if (!project.coverVideo) return undefined
@@ -933,6 +1248,19 @@ export function getCategoryCardPreview(slug: ServiceSlug): CategoryCardPreview |
       kind: 'video',
       src: first.video.src,
       poster: first.video.poster,
+      alt: first.video.alt,
+      disclaimer: first.video.disclaimer,
+    }
+  }
+
+  if (slug === 'video') {
+    const clips = getVideoClipsForCategory()
+    const first = clips[0]
+    if (!first) return null
+    return {
+      kind: 'video',
+      src: first.video.src,
+      poster: first.video.poster ?? first.project.coverImage,
       alt: first.video.alt,
       disclaimer: first.video.disclaimer,
     }

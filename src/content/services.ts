@@ -1,4 +1,4 @@
-/** Category slugs → `/work/<slug>`. Order matches `public/assets/`. */
+/** Category slugs → `/work/<slug>`. */
 export const SERVICE_SLUGS = [
   'branding',
   'flyers',

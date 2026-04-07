@@ -10,8 +10,7 @@
     "preview": "vite preview",
     "mockups:hospice-social": "node scripts/generate-hospice-phone-mockups.mjs",
     "mockups:hospice-brochure": "node scripts/generate-hospice-brochure-mockup.mjs",
-    "mockups:morva-coffee": "node scripts/generate-morva-coffee-mockup.mjs",
-    "mockups:nova-apparel": "node scripts/generate-nova-apparel-mockup.mjs"
+    "mockups:morva-coffee": "node scripts/generate-morva-coffee-mockup.mjs"
   },
   "dependencies": {
     "react": "^19.2.4",

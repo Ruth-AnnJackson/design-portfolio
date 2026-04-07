@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom'
 import { HeroWorkSlider } from '../components/HeroWorkSlider'
-import { getFeaturedProjects } from '../content/projects'
+import { getHeroSlides } from '../content/projects'
 import { ui } from '../ui/classes'
 
 export function Home() {
-  const featured = getFeaturedProjects()
+  const heroSlides = getHeroSlides()
 
   return (
     <div className="-mt-10">
       {/* Full-width slideshow — edge to edge, first thing below the nav */}
       <div className="ml-[calc(50%-50vw)] mr-[calc(50%-50vw)] w-screen max-w-none">
-        <HeroWorkSlider projects={featured} variant="fullBleed" />
+        <HeroWorkSlider slides={heroSlides} variant="fullBleed" />
       </div>
 
       <section className="mx-auto max-w-3xl px-5 py-12 sm:py-14 lg:py-16">
@@ -25,7 +25,7 @@ export function Home() {
         </h1>
 
         <p className="mt-4 text-pretty text-base leading-relaxed text-neutral-600 dark:text-neutral-300 sm:text-lg">
-          Brand, print, logos, motion, photo, and video—by category.
+          Brand, print, logos, motion, photo, and video—organized so you can browse by type of work.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3">

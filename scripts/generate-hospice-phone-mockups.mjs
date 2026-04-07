@@ -1,7 +1,7 @@
 /**
- * Smartphone + IG-style in-feed framing. Device chrome is vector (Sharp/SVG), not a photo
- * of a real phone — swap to a photo frame asset if you add a licensed device PNG template.
- * Run: npm run mockups:hospice-social
+ * Smartphone + IG-style in-feed framing. `mockup-social-carousel.png` matches a classic
+ * “carousel strip” concept: five equal 4:5 tiles in one row (2 + phone + 2), aligned on
+ * the same baseline, gaps between tiles and screen, phone layered on top. Run: npm run mockups:hospice-social
  */
 import sharp from 'sharp'
 import { mkdir } from 'fs/promises'
@@ -37,17 +37,34 @@ const CANVAS_H = PHONE_H + MARGIN_Y * 2
 
 const USER_HANDLE = 'unity_hospice'
 
-function phoneLeft() {
-  return Math.round((CANVAS_W - PHONE_W) / 2)
+function phoneLeft(canvasW = CANVAS_W) {
+  return Math.round((canvasW - PHONE_W) / 2)
 }
 function phoneTop() {
   return Math.round((CANVAS_H - PHONE_H) / 2) - 6
 }
 
 /** Studio backdrop + soft vignette */
-async function studioBackgroundPng() {
-  const svg = Buffer.from(
-    `<svg width="${CANVAS_W}" height="${CANVAS_H}" xmlns="http://www.w3.org/2000/svg">
+async function studioBackgroundPng(canvasW = CANVAS_W, variant = 'cool') {
+  const warm = Buffer.from(
+    `<svg width="${canvasW}" height="${CANVAS_H}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f7f3eb"/>
+          <stop offset="50%" stop-color="#f2ede4"/>
+          <stop offset="100%" stop-color="#ebe4d8"/>
+        </linearGradient>
+        <radialGradient id="vin" cx="50%" cy="45%" r="75%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#000000" stop-opacity="0.04"/>
+        </radialGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#bg)"/>
+      <rect width="100%" height="100%" fill="url(#vin)"/>
+    </svg>`,
+  )
+  const cool = Buffer.from(
+    `<svg width="${canvasW}" height="${CANVAS_H}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stop-color="#eef0f4"/>
@@ -63,12 +80,12 @@ async function studioBackgroundPng() {
       <rect width="100%" height="100%" fill="url(#vin)"/>
     </svg>`,
   )
-  return sharp(svg).png().toBuffer()
+  return sharp(variant === 'warm' ? warm : cool).png().toBuffer()
 }
 
 /** Layered contact + ambient shadow (scales with phone size) */
-async function floorShadowPng() {
-  const cx = CANVAS_W / 2
+async function floorShadowPng(canvasW = CANVAS_W) {
+  const cx = canvasW / 2
   const baseY = phoneTop() + PHONE_H - 4
   const rw = PHONE_W / 492
   const rh = PHONE_H / 1000
@@ -76,7 +93,7 @@ async function floorShadowPng() {
   const b2 = Math.round(28 * SCALE)
   const b3 = Math.round(14 * SCALE)
   const svg = Buffer.from(
-    `<svg width="${CANVAS_W}" height="${CANVAS_H}" xmlns="http://www.w3.org/2000/svg">
+    `<svg width="${canvasW}" height="${CANVAS_H}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <filter id="b1" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur in="SourceGraphic" stdDeviation="${b1}"/>
@@ -97,8 +114,8 @@ async function floorShadowPng() {
 }
 
 /** Device shell: gradient fill, island, side keys (positions scale with device) */
-async function phoneShellPng() {
-  const L = phoneLeft()
+async function phoneShellPng(canvasW = CANVAS_W) {
+  const L = phoneLeft(canvasW)
   const T = phoneTop()
   const k = PHONE_H / REF_PHONE_H
   const bw = Math.max(3, Math.round(4 * k))
@@ -126,7 +143,7 @@ async function phoneShellPng() {
   const homeRx = homeH / 2
   const homeY = PHONE_H - Math.round(22 * k)
   const svg = Buffer.from(
-    `<svg width="${CANVAS_W}" height="${CANVAS_H}" xmlns="http://www.w3.org/2000/svg">
+    `<svg width="${canvasW}" height="${CANVAS_H}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="metal" x1="8%" y1="0%" x2="92%" y2="100%">
           <stop offset="0%" stop-color="#6a6a78"/>
@@ -210,28 +227,49 @@ async function addScreenDepth(screenBuf) {
     .toBuffer()
 }
 
-/** Status bar + post header + media + action row + caption strip (IG-style, scales with phone) */
-async function buildFeedScreen(imageBuffer) {
+/** In-feed media slot: 4:5 portrait (Instagram-style), clamped to available screen height. */
+function feedMediaLayout() {
   const W = screenW
   const H = screenH
   const u = PHONE_H / REF_PHONE_H
   const fs = (n) => Math.max(1, Math.round(n * u))
-
   const statusH = fs(44)
   const postHeadH = fs(52)
   const actionH = fs(50)
   const metaH = fs(52)
   const minBlack = fs(48)
-  let mediaSize = W
-  const needed = statusH + postHeadH + mediaSize + actionH + metaH + minBlack
+  let mediaH = Math.round((W * 5) / 4)
+  const needed = statusH + postHeadH + mediaH + actionH + metaH + minBlack
   if (needed > H) {
-    mediaSize = Math.max(fs(280), H - statusH - postHeadH - actionH - metaH - minBlack)
+    mediaH = Math.max(fs(240), H - statusH - postHeadH - actionH - metaH - minBlack)
   }
+  return { statusH, postHeadH, actionH, metaH, mediaW: W, mediaH, fs, u }
+}
 
-  const imgBuf = await sharp(imageBuffer)
-    .resize(mediaSize, mediaSize, { fit: 'cover', position: 'centre' })
-    .png()
-    .toBuffer()
+/** Status bar + post header + media + action row + caption strip (IG-style, scales with phone) */
+async function buildFeedScreen(imageBuffer, options = {}) {
+  const { precomposedMedia, captionTspan = ' Compassionate care, every day.' } = options
+  const W = screenW
+  const H = screenH
+  const { statusH, postHeadH, actionH, metaH, mediaW, mediaH, fs } = feedMediaLayout()
+
+  let imgBuf
+  if (precomposedMedia) {
+    const m = await sharp(precomposedMedia).metadata()
+    if (m.width === mediaW && m.height === mediaH) {
+      imgBuf = precomposedMedia
+    } else {
+      imgBuf = await sharp(precomposedMedia)
+        .resize(mediaW, mediaH, { fit: 'cover', position: 'centre' })
+        .png()
+        .toBuffer()
+    }
+  } else {
+    imgBuf = await sharp(imageBuffer)
+      .resize(mediaW, mediaH, { fit: 'cover', position: 'centre' })
+      .png()
+      .toBuffer()
+  }
 
   const cx = fs(30)
   const avR = fs(17)
@@ -253,7 +291,7 @@ async function buildFeedScreen(imageBuffer) {
   )
   const headerPng = await sharp(headerSvg).png().toBuffer()
 
-  const actionY = statusH + postHeadH + mediaSize
+  const actionY = statusH + postHeadH + mediaH
   const sw = Math.max(2, fs(2))
   const footerSvg = Buffer.from(
     `<svg width="${W}" height="${actionH + metaH}" xmlns="http://www.w3.org/2000/svg">
@@ -267,7 +305,7 @@ async function buildFeedScreen(imageBuffer) {
       <line x1="1" y1="${actionH}" x2="${W - 1}" y2="${actionH}" stroke="#262626" stroke-width="1"/>
       <text x="${fs(16)}" y="${actionH + fs(30)}" fill="#a8a8a8" font-family="system-ui, -apple-system, sans-serif" font-size="${fs(12)}" font-weight="500">Liked by community_health and others</text>
       <text x="${fs(16)}" y="${actionH + fs(48)}" fill="#e8e8e8" font-family="system-ui, -apple-system, sans-serif" font-size="${fs(12)}">
-        <tspan fill="#ffffff" font-weight="600">${escapeXml(USER_HANDLE)}</tspan><tspan> Compassionate care, every day.</tspan>
+        <tspan fill="#ffffff" font-weight="600">${escapeXml(USER_HANDLE)}</tspan><tspan>${escapeXml(captionTspan)}</tspan>
       </text>
     </svg>`,
   )
@@ -295,6 +333,55 @@ async function buildFeedScreen(imageBuffer) {
   return addScreenDepth(rounded)
 }
 
+/**
+ * One 4:5 strip tile (same size as in-feed media), rounded corners + soft drop shadow.
+ * Used for slides 1–2 and 4–5 beside the phone.
+ */
+async function stripTileWithShadow(imageBuffer, mediaW, mediaH) {
+  const k = PHONE_H / REF_PHONE_H
+  const cornerRx = Math.max(8, Math.round(Math.min(mediaW, mediaH) * 0.028))
+  const face = await sharp(imageBuffer)
+    .resize(mediaW, mediaH, { fit: 'cover', position: 'centre' })
+    .png()
+    .toBuffer()
+  const rounded = await applyRoundedMask(face, mediaW, mediaH, cornerRx)
+
+  const pad = Math.round(Math.min(mediaW, mediaH) * 0.05)
+  const drop = Math.round(mediaH * 0.035)
+  const tw = mediaW + pad * 2
+  const th = mediaH + pad + drop
+  const cx = tw / 2
+  const cy = mediaH + pad + Math.round(mediaH * 0.04)
+  const rxEll = Math.round(mediaW * 0.38)
+  const ryEll = Math.round(mediaH * 0.09)
+  const blur = Math.max(5, Math.round(9 * k))
+  const shadowSvg = Buffer.from(
+    `<svg width="${tw}" height="${th}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="b" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="${blur * 0.38}"/>
+        </filter>
+      </defs>
+      <ellipse cx="${cx}" cy="${cy}" rx="${rxEll}" ry="${ryEll}" fill="#2a2418" opacity="0.22" filter="url(#b)"/>
+    </svg>`,
+  )
+  const shadowPng = await sharp(shadowSvg).png().toBuffer()
+  return sharp({
+    create: {
+      width: tw,
+      height: th,
+      channels: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    },
+  })
+    .composite([
+      { input: shadowPng, left: 0, top: 0 },
+      { input: rounded, left: pad, top: pad },
+    ])
+    .png()
+    .toBuffer()
+}
+
 function escapeXml(s) {
   return String(s)
     .replace(/&/g, '&amp;')
@@ -304,9 +391,9 @@ function escapeXml(s) {
 }
 
 /** Outer glass streak (template-style specular) */
-async function screenGlossPng(left, top) {
+async function screenGlossPng(left, top, canvasW = CANVAS_W) {
   const svg = Buffer.from(
-    `<svg width="${CANVAS_W}" height="${CANVAS_H}" xmlns="http://www.w3.org/2000/svg">
+    `<svg width="${canvasW}" height="${CANVAS_H}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stop-color="#ffffff" stop-opacity="0.2"/>
@@ -331,7 +418,7 @@ async function makeMockup(inputPath, outputPath, { maxInputWidth } = {}) {
   const raw = await pipeline.png().toBuffer()
 
   const screenBuf = await buildFeedScreen(raw)
-  const L = phoneLeft()
+  const L = phoneLeft(CANVAS_W)
   const T = phoneTop()
   const sLeft = L + BEZEL_X
   const sTop = T + BEZEL_TOP
@@ -346,6 +433,73 @@ async function makeMockup(inputPath, outputPath, { maxInputWidth } = {}) {
       { input: shadowBuf, left: 0, top: 0 },
       { input: shellBuf, left: 0, top: 0 },
       { input: screenBuf, left: sLeft, top: sTop },
+      { input: glossBuf, left: 0, top: 0, blend: 'over' },
+    ])
+    .png({ compressionLevel: 9 })
+    .toFile(outputPath)
+
+  console.log('Wrote', path.relative(root, outputPath))
+}
+
+async function makeCarouselMockup(jobSpecs, outputPath) {
+  const buffers = []
+  for (const job of jobSpecs) {
+    const inputPath = path.join(srcDir, job.src)
+    let pipeline = sharp(inputPath).ensureAlpha()
+    if (job.maxInputWidth) {
+      pipeline = pipeline.resize(job.maxInputWidth, job.maxInputWidth, {
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+    }
+    buffers.push(await pipeline.png().toBuffer())
+  }
+
+  if (buffers.length !== 5) throw new Error('Hero social mockup expects exactly 5 slide images')
+
+  const { mediaW, mediaH, statusH, postHeadH, u } = feedMediaLayout()
+  const gap = Math.max(12, Math.round(16 * u))
+  const Wstrip = 5 * mediaW + 4 * gap
+  const pad = Math.round(Math.min(mediaW, mediaH) * 0.05)
+  const wideW = Wstrip + 2 * MARGIN_X + pad * 2
+
+  const T1 = MARGIN_X + pad
+  const screenLeft = T1 + 2 * mediaW + 2 * gap
+  const L = screenLeft - BEZEL_X
+  const T = phoneTop()
+  const sTop = T + BEZEL_TOP
+  const mediaTop = sTop + statusH + postHeadH
+  const sLeft = L + BEZEL_X
+
+  const tile1 = await stripTileWithShadow(buffers[0], mediaW, mediaH)
+  const tile2 = await stripTileWithShadow(buffers[1], mediaW, mediaH)
+  const tile4 = await stripTileWithShadow(buffers[3], mediaW, mediaH)
+  const tile5 = await stripTileWithShadow(buffers[4], mediaW, mediaH)
+
+  const x1 = T1 - pad
+  const x2 = T1 + mediaW + gap - pad
+  const x4 = screenLeft + mediaW + gap - pad
+  const x5 = screenLeft + 2 * mediaW + 2 * gap - pad
+  const yTiles = mediaTop - pad
+
+  const activeInFeed = await buildFeedScreen(buffers[2], {
+    captionTspan: ' Carousel — swipe for the full story.',
+  })
+
+  const bgBuf = await studioBackgroundPng(wideW, 'warm')
+  const shadowBuf = await floorShadowPng(wideW)
+  const shellBuf = await phoneShellPng(wideW)
+  const glossBuf = await screenGlossPng(sLeft, sTop, wideW)
+
+  await sharp(bgBuf)
+    .composite([
+      { input: shadowBuf, left: 0, top: 0 },
+      { input: tile1, left: x1, top: yTiles },
+      { input: tile2, left: x2, top: yTiles },
+      { input: tile4, left: x4, top: yTiles },
+      { input: tile5, left: x5, top: yTiles },
+      { input: shellBuf, left: 0, top: 0 },
+      { input: activeInFeed, left: sLeft, top: sTop },
       { input: glossBuf, left: 0, top: 0, blend: 'over' },
     ])
     .png({ compressionLevel: 9 })
@@ -373,5 +527,16 @@ for (const job of jobs) {
   const outputPath = path.join(outDir, job.out)
   await makeMockup(inputPath, outputPath, { maxInputWidth: job.maxInputWidth })
 }
+
+await makeCarouselMockup(
+  [
+    { src: 'Social Media Campaign.png', maxInputWidth: 1800 },
+    { src: 'Social-Media-Campaign-2.png' },
+    { src: 'Social-Media-Campaign-3.png' },
+    { src: 'Social-Media-Campaign-4.png' },
+    { src: 'Social-Media-Campaign-5.png' },
+  ],
+  path.join(outDir, 'mockup-social-carousel.png'),
+)
 
 console.log('Done.')

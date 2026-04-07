@@ -10,13 +10,13 @@ const AUTO_MS = 6500
 type Variant = 'card' | 'fullBleed'
 
 export function HeroWorkSlider({
-  projects,
+  slides,
   variant = 'card',
 }: {
-  projects: Project[]
+  slides: { key: string; project: Project }[]
   variant?: Variant
 }) {
-  const n = projects.length
+  const n = slides.length
   const [index, setIndex] = useState(0)
   const [hoverPause, setHoverPause] = useState(false)
   const [tabHidden, setTabHidden] = useState(
@@ -69,8 +69,9 @@ export function HeroWorkSlider({
 
   if (n === 0) return null
 
-  const current = projects[index]
+  const current = slides[index].project
   const coverDisclaimer = disclaimerForCoverVideo(current)
+  const allowZoom = !reduceMotion && !current.coverVideo
 
   const sharedHandlers = {
     onMouseEnter: () => setHoverPause(true),
@@ -100,15 +101,24 @@ export function HeroWorkSlider({
       >
         <div className="relative w-full bg-neutral-200 dark:bg-neutral-950">
           {/* Tall band + object-contain so full pieces read clearly (no aggressive crop). */}
-          <div className="relative min-h-[min(52vh,420px)] h-[min(78vh,920px)] w-full sm:min-h-[min(58vh,480px)] sm:h-[min(82vh,980px)] lg:min-h-[min(62vh,520px)] lg:h-[min(86vh,1080px)]">
+          <div className="relative min-h-[min(52vh,420px)] h-[min(78vh,920px)] w-full overflow-hidden sm:min-h-[min(58vh,480px)] sm:h-[min(82vh,980px)] lg:min-h-[min(62vh,520px)] lg:h-[min(86vh,1080px)]">
             <div
-              key={current.id}
-              className={`flex h-full w-full items-center justify-center ${reduceMotion ? '' : 'animate-hero-fade'}`}
+              key={slides[index].key}
+              className={`flex h-full w-full items-center justify-center overflow-hidden ${reduceMotion ? '' : 'animate-hero-fade'}`}
             >
-              <CoverMedia
-                project={current}
-                className="max-h-full w-full object-contain px-2 py-3 sm:px-4 sm:py-5 lg:px-8 lg:py-8"
-              />
+              <div
+                className={`flex h-full w-full items-center justify-center will-change-transform ${allowZoom ? 'animate-hero-ken-burns' : ''}`}
+                style={
+                  allowZoom
+                    ? { animationDuration: `${AUTO_MS}ms` }
+                    : undefined
+                }
+              >
+                <CoverMedia
+                  project={current}
+                  className="max-h-full w-full object-contain px-2 py-3 sm:px-4 sm:py-5 lg:px-8 lg:py-8"
+                />
+              </div>
             </div>
             {n > 1 ? (
               <>
@@ -189,13 +199,13 @@ export function HeroWorkSlider({
 
             {n > 1 ? (
               <div className="mt-5 flex justify-center gap-2 sm:justify-start" role="tablist" aria-label="Slide indicators">
-                {projects.map((p, i) => (
+                {slides.map((s, i) => (
                   <button
-                    key={p.id}
+                    key={s.key}
                     type="button"
                     role="tab"
                     aria-selected={i === index}
-                    aria-label={`Show ${p.title}`}
+                    aria-label={`Show ${s.project.title}`}
                     aria-current={i === index ? 'true' : undefined}
                     onClick={() => setIndex(i)}
                     className={[
@@ -211,9 +221,8 @@ export function HeroWorkSlider({
 
             <div className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
               <Link to="/work" className="font-semibold text-neutral-800 dark:text-neutral-200">
-                All work
-              </Link>{' '}
-              — by category.
+                View all work
+              </Link>
             </div>
           </div>
         </div>
@@ -249,13 +258,22 @@ export function HeroWorkSlider({
           <PortfolioMockup>
             <div className="aspect-[4/3] overflow-hidden bg-neutral-100 dark:bg-neutral-950">
               <div
-                key={current.id}
-                className={reduceMotion ? '' : 'animate-hero-fade'}
+                key={slides[index].key}
+                className={`h-full w-full overflow-hidden ${reduceMotion ? '' : 'animate-hero-fade'}`}
               >
-                <CoverMedia
-                  project={current}
-                  className="h-full w-full object-contain p-2 sm:p-3"
-                />
+                <div
+                  className={`flex h-full w-full items-center justify-center will-change-transform ${allowZoom ? 'animate-hero-ken-burns' : ''}`}
+                  style={
+                    allowZoom
+                      ? { animationDuration: `${AUTO_MS}ms` }
+                      : undefined
+                  }
+                >
+                  <CoverMedia
+                    project={current}
+                    className="h-full w-full object-contain p-2 sm:p-3"
+                  />
+                </div>
               </div>
             </div>
           </PortfolioMockup>
@@ -317,13 +335,13 @@ export function HeroWorkSlider({
 
         {n > 1 ? (
           <div className="mt-4 flex justify-center gap-2" role="tablist" aria-label="Slide indicators">
-            {projects.map((p, i) => (
+            {slides.map((s, i) => (
               <button
-                key={p.id}
+                key={s.key}
                 type="button"
                 role="tab"
                 aria-selected={i === index}
-                aria-label={`Show ${p.title}`}
+                aria-label={`Show ${s.project.title}`}
                 aria-current={i === index ? 'true' : undefined}
                 onClick={() => setIndex(i)}
                 className={[
@@ -339,9 +357,8 @@ export function HeroWorkSlider({
 
         <div className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
           <Link to="/work" className="font-medium text-neutral-800 dark:text-neutral-200">
-            All work
-          </Link>{' '}
-          — by category.
+            View all work
+          </Link>
         </div>
       </div>
     </div>

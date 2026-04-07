@@ -13,7 +13,10 @@ export function CoverMedia(props: {
 }) {
   const { project, className } = props
 
-  const videoSrc = project.coverVideo ?? firstGalleryVideoSrc(project.gallery)
+  // Prefer explicit `coverVideo`, otherwise prefer `coverImage`.
+  // (Projects like Ignite include a promo video in the gallery but should still use their static cover on cards/hero.)
+  const videoSrc =
+    project.coverVideo ?? (project.coverImage ? undefined : firstGalleryVideoSrc(project.gallery))
   if (videoSrc) {
     return (
       <video
